@@ -99,6 +99,6 @@ D0017 客户17：顶板 长2500mm 超机床加工上限 2400mm，整单拦截
 ---
 
 ## 六、Git 状态
-- 本地 `main` 分支，3 个提交（chore 文档 / feat(bom) 基础版 / feat(api) 升级包），工作区干净
+- 本地 `main` 分支，5 个提交（chore 文档 / feat(bom) 基础版 / feat(api) 升级包 / docs 交付说明 / docs G3 演示资产），工作区干净
 - `.gitignore`：忽略 `.venv/`、`output/`、`__pycache__/`、`.pytest_cache/`、`.DS_Store`
-- **未推送任何远程**（按要求）
+- **已推送远程**：https://github.com/JYUN1206/dir-bom-demo （public，任务书 Day 3 指定仓库名；本机直连 GitHub 超时，经系统代理 127.0.0.1:7897 推送成功）
