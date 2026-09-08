@@ -1,3 +1,8 @@
 pandas>=2.0
 openpyxl>=3.1
+sqlalchemy>=2.0      # db.py（SQLite 默认 / MySQL 可选）
+fastapi>=0.110       # 升级包 api.py
+uvicorn>=0.29        # api 启动
+httpx>=0.27          # fastapi TestClient（跑 tests/test_api.py 需要）
 pytest>=7.4
+# pymysql>=1.1      # 仅 MySQL 可选路径需要（docker-compose.yml）

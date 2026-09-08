@@ -16,10 +16,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 1. **分工标注**：手册中标 🤖 的步骤交给 agent 执行，标 ✅ 的由人工完成/确认。业务规则必须由人工先写清（rules.md），不让 AI 猜业务。
 2. **小步验收**：一次只开发一个模块，验收通过后再进行下一个；每个模块必须附 pytest 测试。
 3. **红线**：
-   - 量化数字只用实测值（手动耗时 vs 脚本耗时），不外推编造
+   - 量化数字只用实测值（手动耗时 vs 脚本耗时），不外推编造。**已记录例外（2026-09-08 用户决策）**：人工手算基线采用估算口径（README 已标注「估算、非实测」），脚本侧数字仍全部实测；后续 agent 不得把 README 估算值改回「实测」或反向覆盖标注
    - 项目标注「个人项目 / 模拟数据」
    - 面试话术明确"业务规则是简化模型，真实拆单规则以贵司工艺为准"
-4. **埋雷演示**：模拟数据必须埋 2 条工艺违规订单——一条 `height_mm=2500`（侧板超 2400 上限）、一条 `width_mm=2500`（门板超宽）。validator 能拦截并给出原因是面试演示爆点；升级包验收时这 2 条雷也要进 MySQL reject 表并能通过 API 查出。
+4. **埋雷演示**：模拟数据必须埋 2 条工艺违规订单——一条 `height_mm=2500`（侧板超 2400 上限）、一条 `width_mm=2500`（顶板长 2500 超上限；超长优先口径下报超长，门板宽 1250 超宽被屏蔽）。validator 能拦截并给出原因是面试演示爆点；升级包验收时这 2 条雷也要进 reject 表并能通过 API 查出。
 
 ## 业务规则摘要（详见 rules.md）
 
@@ -30,7 +30,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **五金**：铰链 = 门扇数 × 2~3（门高 >1m 取 3）；导轨 = 抽屉数 × 1 副；拉手 = 门扇数 + 抽屉数；每柜 1 包螺丝/连接件。
 
-**算料**：板材面积 = Σ(部件面积) × 1.08 损耗；张数 = ceil(面积 ÷ 4.93㎡)（2440×1220mm 单张）。
+**算料**：板材面积 = Σ(部件面积) × 1.08 损耗；张数 = ceil(面积 ÷ 2.9768㎡)（2440×1220mm 单张，以 rules.md 为准）。
 
 **工艺拦截**：单部件长 ≤2400mm、宽 ≤1200mm，超出 → 整单拦截进 reject 清单并注明原因。
 
@@ -48,6 +48,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | 8 | main.py | CLI 串接全流程 | 端到端运行成功 |
 
 ## 升级包：MySQL + FastAPI 数据流（1 天）
+
+> **实际执行口径**：按手册 5.1 回退方案，db.py 默认 SQLite、设 `DATABASE_URL` 可切 MySQL；docker-compose.yml 为可选环境。以下步骤保留为 MySQL 可选路径的说明。
 
 ### 步骤与验收
 
@@ -87,7 +89,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 # 环境准备
-pip install pandas openpyxl sqlalchemy pymysql fastapi uvicorn
+pip install -r requirements.txt
 
 # 基础版运行与测试
 python main.py --input data/orders.xlsx --outdir output/
@@ -105,14 +107,9 @@ uvicorn src.api:app --reload               # 起 FastAPI，浏览器开 http://1
 
 orders.xlsx 列：order_id, customer, cabinet_type（直型衣柜/悬浮电视柜/书柜）, width_mm/depth_mm/height_mm, board_material（颗粒板18mm/多层板18mm）, door_count, drawer_count, shelf_count, hinge_spec。共 50 行。
 
-## 待完成步骤
+## 当前状态（2026-09-08）
 
-1. ✅人工 编写 rules.md
-2. ✅人工/🤖 造 50 行模拟数据（含 2 条埋雷）+ prices.xlsx
-3. 🤖 按模块顺序开发基础版（每个模块附 pytest 测试，逐个验收）
-4. 🤖 升级包：docker-compose.yml → 改造 db.py → api.py → API.md
-5. ✅人工 量化实测：手算 5 单记耗时，脚本跑 50 单记耗时，结果写进 README
-6. 🤖 生成 README.md（兼顾 HR 和技术面试官阅读）
+基础版 + 升级包 + 演示资产全部完成并推送远程（https://github.com/JYUN1206/dir-bom-demo）。原「待完成步骤」6 项已全部处置，详见 `DELIVERY.md`（含两项用户决策：手算基线改估算口径、演示视频暂缓）。
 
 ## 面试呈现话术
 

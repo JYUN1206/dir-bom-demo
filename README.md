@@ -22,7 +22,7 @@
 | 项目 | 耗时 | 来源 |
 |---|---|---|
 | 人工拆单（5 单） | **约 40 分钟（估算）** | 按拆单流程逐步骤推算的工程估算，非逐秒实测 |
-| 脚本拆单（50 单，本机实测） | **≈ 0.09 秒** | 实测（`run()` 5 次均值 86.5–98.8 ms） |
+| 脚本拆单（50 单，本机实测） | **≈ 0.09 秒** | 实测（单次 84–107 ms，本机多次运行） |
 
 > **口径说明**：脚本耗时 0.09 秒为**本机实测**；人工手算 40 分钟为**估算值，非实测**——本项目为演示用途，人工基线采用估算口径，面试中如被问及请如实说明。
 
@@ -94,11 +94,13 @@ python3 -m venv .venv
 │   ├── validator.py       # 工艺拦截
 │   ├── report.py          # 采购 + reject Excel
 │   └── db.py              # SQLite 入库 + 统计
-├── tests/                 # pytest(39 条, 每模块≥3)
+├── tests/                 # pytest(10 个文件, 49 条)
 ├── data/                  # orders.xlsx / prices.xlsx(模拟)
-├── scripts/               # make_sample_data.py(造数据)
+├── scripts/               # make_sample_data.py(造数据) / make_screenshots.py(拦截截图渲染)
+├── screenshots/           # 拦截证据截图(真实运行输出渲染)
 ├── output/                # 报表与库(运行产物, git 忽略)
 ├── rules.md / PRD.md / IMPLEMENTATION_PLAN.md   # 规则与计划
+├── G3_CHECKLIST.md / 手算实测工作表.md           # G3 收口清单与面试自练材料
 └── Codex操作手册.md        # AI agent 协作流程
 ```
 
